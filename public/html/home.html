@@ -1,77 +1,43 @@
-<!-- <!DOCTYPE html>
-<html>
-<head>
-	<title>Chatting App</title>
-	  <meta charset="utf-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1">
-	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-		<style>
-		* { margin: 0; padding: 0; box-sizing: border-box; }
-		body { font: 13px Helvetica, Arial; }
-		form { padding: 3px; position: fixed; bottom: 0; width: 100%; }
-		form input {  padding: 1%; bottom: 0; position: absolute;}
-		form button {padding: 1%; }
-		.msg { list-style-type: none; margin: 0; padding: 0; }
-		.msg li { padding: 5px 10px; }
-		.msg li:nth-child(odd) { background: #eee; }
-		</style>
-</head>
-<body>
 
-<div class="container">
-  <ul class="list-group msg"></ul>
-	<form id="chat" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-		<input class="col-xs-10 col-sm-10 col-md-10 col-lg-10" id="in" autocomplete="off"/>
-		<button class="col-xs-2 col-sm-2 col-md-2 col-lg-2 btn-primary">Send</button>
-	</form>
-</div>
-</body>
- <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<script>
-var socket = io();
- $('#chat').submit(function(){
-	 socket.emit('chat message', $('#in').val());
-	 $('#in').val('');
-	 return false;
- });
- socket.on('chat message', function(msg){
-	 $('#msg').append($('<li>').text(msg));
- });
-	</script>
-
-</html> -->
 <!doctype html>
 <html>
-  <head>
-    <title>Socket.IO chat</title>
-		<style type="text/css">
-		.container{
-			margin-top: 2%;
-		}
-		.form-inline .form-group input {
-			width : 100%;
-		}
-		.fixed-panel {
-			min-height: 25em;
-			max-height: 25em;
-			overflow-y: scroll;
-		}
+<head>
+	<title>Socket.IO chat</title>
+	<style type="text/css">
+	.container{
+		margin-top: 2%;
+	}
+	.form-inline .form-group input {
+		width : 100%;
+	}
+	.fixed-panel {
+		min-height: 25em;
+		max-height: 25em;
+		overflow-y: scroll;
+	}
 	</style>
-  </head>
-	<body>
+</head>
+<body>
 	<div class="container ">
 		<div class="panel panel-primary ">
-			<div class="panel-heading ">Gupshup</div>
-			<div class="panel-body fixed-panel"><ul id="msg" class="list-group col-md-offset-1 col-lg-offset-1 col-xs-10 col-sm-10 col-md-10 col-lg-10">
-				<!-- <li class="list-group-item list-group-item-success">Hello</li>
-				<li class="list-group-item list-group-item-warning text-right">Hii</li> -->
-
+			<div class="panel-heading "><h4>Gupshup</h4>
+			</div>
+			<div class="panel-body fixed-panel a"><ul id="msg" class="list-group col-md-offset-1 col-lg-offset-1 col-xs-10 col-sm-10 col-md-10 col-lg-10">
 			</ul></div>
+			<div class="panel-body fixed-panel c"><ul id="onlineList" class="list-group col-md-offset-4 col-lg-offset-4 col-xs-4 col-sm-4 col-md-4 col-lg-4">
+			</ul></div>
+      <div class="panel-body fixed-panel b">
+        <div>
+          <form id="user" class="form-inline row ">
+            <div class="form-group ">
+              <input type="text" class="form-control " id="name" placeholder="Enter UserName"/>
+            </div>
+            <div id="userBtn" style="margin-right: 1%;" type="button" class="btn btn-danger">Submit</div>
+  				</form>
+        </div>
+			</div>
 			<div class="panel-footer">
-				<form class="form-inline row ">
+				<form id="message" class="form-inline row ">
 					<div class="form-group col-md-offset-1 col-lg-offset-1 col-xs-8 col-sm-8 col-md-8 col-lg-8">
 						<input type="text" class="form-control " id="in" placeholder="Enter message here"/>
 					</div>
@@ -80,23 +46,68 @@ var socket = io();
 				</form>
 			</div>
 		</div>
+
 	</div>
 
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <script>
-      var socket = io();
-      $('form').submit(function(){
-        socket.emit('chat message', $('#in').val());
-        $('#in').val('');
-        return false;
-      });
-      socket.on('chat message', function(msg){
-        $('#msg').append($('<li>').text(msg));
-				$ ('ul#msg li').addClass ('list-group-item list-group-item-success');
+	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<script>
+	var socket;
 
-      });
-    </script>
+	$(document).ready(function(){
+		$('#message').hide();
+    $('.a').hide();
+		$('.b').show();
+		$('.c').hide();
+	});
+	
+	$('#userBtn').click(function(){
+		console.log('button clicked');
+	socket = io();
+	console.log(socket);
+	socket.emit('joined', $('#name').val());
+console.log('joined complete');
+  // $('#message').show();
+  // $('.a').hide();
+  // $('.b').hide();
+	// $('.c').show();
+});
+
+socket.on('online',function(people){
+	console.log('enter');
+	var arr=[];
+	arr=Object.keys(people);
+	console.log(arr);
+});
+	$('#message').submit(function(){
+		socket.emit('chat message', $('#in').val());
+		$('#in').val('');
+		return false;
+	});
+	// socket.on('online', function(err,people){
+	// 	console.log('enter');
+	// 	if (err)
+	//    return console.error(err);
+	// 	var id = Object.keys(people);
+	// 	console.log(id);
+	// });
+	socket.on('chat message', function(id, msg){
+		$('#msg').append($('<li>').text(id+ ": " +msg));
+		$ ('ul#msg li').addClass ('list-group-item list-group-item-success');
+	});
+
+	socket.on('user added', function(n,name){
+		console.log("Client side user added");
+		$('#msg').append($('<div>').text( name+" added\n Total "+n+" participant\n" ));
+	});
+
+
+
+	socket.on('user disconnect', function(n,name){
+		console.log("Client side user deleted");
+		$('#msg').append($('<div>').text( name+" disconnected \n Total "+n+" participant\n" ));
+	});
+	</script>
 </body>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

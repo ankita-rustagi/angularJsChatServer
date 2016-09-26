@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  
+<div class="container">
+  <h2>Registration Form</h2><br>
+  <form class="form-horizontal" action="signUp" method="POST">
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="name">Username:</label>
+      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <input type="text" class="form-control" id="rname" name="rname" placeholder="Enter Username">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="email">Email:</label>
+      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <input type="email" class="form-control" id="remail" name="remail" placeholder="Enter email">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-2" for="rpwd">Password:</label>
+      <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+        <input type="password" class="form-control" id="rpwd" name="rpwd" placeholder="Enter password">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-xs-offset-2 col-xs-10 col-sm-offset-2 col-sm-10 col-md-offset-2 col-md-10 col-lg-offset-2 col-lg-10">
+        <button type="submit" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+  <div class="text-center"><a href="/login"><h4>Already Connected? Login </h4></a> </div>
+</div>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="/public/javascripts/clientside.js"></script>
+</body>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</html>
