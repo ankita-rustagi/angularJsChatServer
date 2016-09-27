@@ -3,38 +3,23 @@
 <html>
 <head>
 	<title>Socket.IO chat</title>
-	<style type="text/css">
-	.container{
-		margin-top: 2%;
-	}
-	.form-inline .form-group input {
-		width : 100%;
-	}
-	.fixed-panel {
-		min-height: 25em;
-		max-height: 25em;
-		overflow-y: scroll;
-	}
-	</style>
 </head>
 <body>
 	<div class="container ">
 		<div class="panel panel-primary ">
 			<div class="panel-heading "><h4>Gupshup</h4>
 			</div>
-			<div class="panel-body fixed-panel a"><ul id="msg" class="list-group col-md-offset-1 col-lg-offset-1 col-xs-10 col-sm-10 col-md-10 col-lg-10">
-			</ul></div>
 			<div class="panel-body fixed-panel c"><ul id="onlineList" class="list-group col-md-offset-4 col-lg-offset-4 col-xs-4 col-sm-4 col-md-4 col-lg-4">
-			</ul></div>
-      <div class="panel-body fixed-panel b">
-        <div>
-          <form id="user" class="form-inline row ">
-            <div class="form-group ">
-              <input type="text" class="form-control " id="name" placeholder="Enter UserName"/>
-            </div>
-            <div id="userBtn" style="margin-right: 1%;" type="button" class="btn btn-danger">Submit</div>
-  				</form>
-        </div>
+			</ul><div id="acceptedOrRejected"></div><div id="chat"></div></div>
+			<div class="panel-body fixed-panel b">
+				<div>
+					<form id="user" class="form-inline row ">
+						<div class="form-group ">
+							<input type="text" class="form-control " id="name" placeholder="Enter UserName"/>
+						</div>
+						<button id="userBtn" style="margin-right: 1%;" type="button" class="btn btn-danger">Submit</button>
+					</form>
+				</div>
 			</div>
 			<div class="panel-footer">
 				<form id="message" class="form-inline row ">
@@ -48,67 +33,10 @@
 		</div>
 
 	</div>
-
-	<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-	<script>
-	var socket;
-
-	$(document).ready(function(){
-		$('#message').hide();
-    $('.a').hide();
-		$('.b').show();
-		$('.c').hide();
-	});
-	
-	$('#userBtn').click(function(){
-		console.log('button clicked');
-	socket = io();
-	console.log(socket);
-	socket.emit('joined', $('#name').val());
-console.log('joined complete');
-  // $('#message').show();
-  // $('.a').hide();
-  // $('.b').hide();
-	// $('.c').show();
-});
-
-socket.on('online',function(people){
-	console.log('enter');
-	var arr=[];
-	arr=Object.keys(people);
-	console.log(arr);
-});
-	$('#message').submit(function(){
-		socket.emit('chat message', $('#in').val());
-		$('#in').val('');
-		return false;
-	});
-	// socket.on('online', function(err,people){
-	// 	console.log('enter');
-	// 	if (err)
-	//    return console.error(err);
-	// 	var id = Object.keys(people);
-	// 	console.log(id);
-	// });
-	socket.on('chat message', function(id, msg){
-		$('#msg').append($('<li>').text(id+ ": " +msg));
-		$ ('ul#msg li').addClass ('list-group-item list-group-item-success');
-	});
-
-	socket.on('user added', function(n,name){
-		console.log("Client side user added");
-		$('#msg').append($('<div>').text( name+" added\n Total "+n+" participant\n" ));
-	});
-
-
-
-	socket.on('user disconnect', function(n,name){
-		console.log("Client side user deleted");
-		$('#msg').append($('<div>').text( name+" disconnected \n Total "+n+" participant\n" ));
-	});
-	</script>
 </body>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="/public/javascripts/clientside.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

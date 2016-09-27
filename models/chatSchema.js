@@ -1,10 +1,13 @@
-var mongoose = require('./mongoose connection');
-
+var mongoose = require('mongoose');
+// Creating Schema for chat
 var chat = mongoose.Schema({
-  from: String,
-  to: String,
-  chat: String,
-  date: Date
+  conversationId: String,
+  user1: String,
+  user2: String,
+  chatHistory: [{
+    sender: String,
+    message: String
+  }]
 });
-
+console.log("chatSchema created");
 module.exports = mongoose.model('chat',  chat);
