@@ -109,6 +109,7 @@ socket.on('chat message rec', function(name,msg,id){
   $('#mess'+tempId).append($('<li>').text(name+": "+msg));
 });
 
+// creatind stream and sending file  to server
 $(document).on('change','#file',function(event){
    var file = event.target.files[0];
    var stream = ss.createStream();
