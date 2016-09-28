@@ -1,15 +1,14 @@
-var userConnected=0;
-
   var express = require('express');
   var router = express.Router();
   var path = require('path');
   var user = require('../models/userSchema');
 
-  /* GET users listing. */
+  /* On get request. */
   router.get('/', function(req, res, next) {
     res.sendFile(path.resolve('public/html/signUp.html'));
   });
 
+  /* On post request. */
   router.post('/', function(req, res) {
     var userEmail = req.body.remail;
     var userName = req.body.rname;
@@ -23,5 +22,6 @@ var userConnected=0;
       res.send('hi');
       });
   });
+
 
   module.exports = router;

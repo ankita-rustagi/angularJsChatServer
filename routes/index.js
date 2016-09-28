@@ -4,7 +4,7 @@ var path = require('path');
 var router = express.Router();
 var passport = require('passport');
 
-/* GET users listing. */
+/* GET chat listing. */
 router.get('/',passport.authenticate('jwt', { session: false}) ,function(req, res, next) {
   console.log(res);
   res.sendFile(path.resolve('public/html/home.html'));

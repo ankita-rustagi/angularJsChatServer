@@ -24,6 +24,8 @@ var socketObj={};
 var user=require('./models/userSchema');
 var chat=require('./models/chatSchema');
 var jwt =require('jsonwebtoken');
+
+//Mongoose connection
 mongoose.connect('mongodb://localhost/chating');
 var db=mongoose.connection;
 db.on('error',console.error.bind(console,'connection error: '));
@@ -33,9 +35,9 @@ db.once('open',function(){
 
 
 // view engine setup
-app.engine('html',require('ejs').renderFile);
+// app.engine('html',require('ejs').renderFile);
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'html');
+app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 app.use(logger('dev'));
@@ -44,6 +46,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use('/public',express.static(path.join(__dirname, '/public')));
 
+
+// Passport configuration
 passport.use(new JwtStrategy(opts, function(payload, done) {
     user.findOne({'name': payload.user}, function(err, data) {
       console.log("payload: "+payload.user);

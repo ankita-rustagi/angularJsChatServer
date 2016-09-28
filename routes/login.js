@@ -5,23 +5,28 @@ var mongoose = require('mongoose');
 var user = require('../models/userSchema');
 var jwt =require('jwt-simple');
 
-
+// GET login listing
 router.get('/', function(req, res, next) {
     res.sendFile(path.resolve('public/html/login.html'));
   });
 
-
+//POST login listing
 router.post('/', function(req, res){
     console.log(req.body.uname);
+    //Find in mongo if this user exist
     user.findOne({'name':req.body.uname},function(err,userInfo){
       if(err){
         return console.error(err);
       }
+      //If user exist creating token
       if(userInfo){
         console.log('hello');
+      //Payload is encode(encrypt) with secret key
         payload = {'user': req.body.uname};
-        var token = jwt.encode(payload,'abcd1234!@#qwe#$$');
-        console.log(token);
+
+        //jwt-simple or jsonwebtoken module can be used to create token
+        var token = jwt.encode(payload,'abcd1234!@#qwe#$$'); //if jsonwebtoken
+      //var token = jwt.encode(payload,'abcd1234!@#qwe#$$'); //if jwt-simple
         res.send(token);
       }
       else{
@@ -32,47 +37,3 @@ router.post('/', function(req, res){
 });
 
 module.exports = router;
-
-
-
-
-// module.exports = function(io){
-//   var express = require('express');
-//   var router = express.Router();
-//   var path = require('path');
-//   var user = require('../models/userSchema');
-//   people={};
-//   /* GET users listing. */
-//   router.get('/', function(req, res, next) {
-//     res.sendFile(path.resolve('public/html/login.html'));
-//   });
-//
-//   router.post('/', function(req, res) {
-//
-//     var userEmail = req.body.email;
-//     var userPassword = req.body.pwd;
-//     user.findOne({ 'email': userEmail }, 'name  password', function (err, data) {
-//     if (err) return console.error(err);
-//     console.log("data: "+data);
-//     if(data == null || data == ""){
-//       console.log("enter in if condition");
-//         io.emit('not exist', userEmail);
-//     }
-//     else{
-//       if(data.password == userPassword){
-//         io.on('connection',function(socket){
-//           console.log('successful');
-//           people[socket.id]['userEmail']=userEmail;
-//           people[socket.id]['userName']=userName;
-//           console.log(people);
-//           res.redirect('/chat');
-//         });
-//       }else{
-//         io.emit('wrong password');
-//       }
-//     }
-//   });
-//   });
-//
-//   return router;
-// };
