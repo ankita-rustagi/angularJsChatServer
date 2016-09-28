@@ -1,5 +1,7 @@
 var express = require('express');
-var socket_io = require( "socket.io" );
+var socket_io = require( 'socket.io' );
+var ss = require('socket.io-stream');
+var fs = require('fs');
 var path = require('path');
 var mongoose = require('mongoose');
 var logger = require('morgan');
@@ -19,6 +21,7 @@ db.on('error',console.error.bind(console,'connection error: '));
 db.once('open',function(){
   console.log('mongoose connected');
 });
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,9 +48,25 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-
 // Socket connection established
 io.on('connection',function(socket){
+
+  ss(socket).on('file',function(stream,data){
+  var filename=path.basename(data.name);
+  console.log("path resolve: "+path.resolve(__dirname) );
+  console.log("file name: "+data.name);
+  console.log("file size: "+data.size);
+
+  fs.exists(__dirname+"/filename",function(existFile){
+    if(existFile){
+      console.log("file already exist");
+    }
+    else{
+      console.log("file not exist");
+      stream.pipe(fs.createWriteStream('public/images/'+filename));
+    }
+  });
+  });
 
   //User name and socket get stored in people and socketObj respectively.
   socket.on('joined',function(name){
@@ -87,7 +106,7 @@ io.on('connection',function(socket){
           console.log('chat saved');
         });
       }
-
+      
     });
   });
   //Socket on dissconnection
@@ -120,6 +139,14 @@ io.on('connection',function(socket){
         console.log('chat updated');
       });
     });
+  });
+
+  socket.on("file upload complete",function(rId,fName,fSize){
+    console.log("file upload complete on server");
+    console.log(rId);
+    var filePath=__dirname+"/"+fName;
+    socketObj[rId].emit('chat file rec',  people[socket.id],fName,socket.id);
+    socket.emit('chat file self',  people[socket.id], fName,rId);
   });
 });
 

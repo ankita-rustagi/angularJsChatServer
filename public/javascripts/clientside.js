@@ -1,22 +1,18 @@
 var socket = io();
 
 $(document).ready(function(){
+
   $('#message').hide();
   $('.a').hide();
   $('.b').show();
   $('.c').hide();
 });
+
 // Submit username and emit 'joined' and passing username to server
 $('#userBtn').click(function(){
   socket.emit('joined', $('#name').val());
 });
 
-// //Send message to server by emit 'chat message'
-// $('#message').submit(function(){
-//   socket.emit('chat message', $('#in').val());
-//   $('#in').val('');
-//   return false;
-// });
 
 //Fetching list of online users and displaying on screen
 socket.on('online', function(people, myId){  //myId is the id of user who logged in.
@@ -31,10 +27,10 @@ socket.on('online', function(people, myId){  //myId is the id of user who logged
   }
 });
 
-
 //In the list of online user, click on a user name and  id of the selected user is send to server by emiting 'send request'
 $(document).on('click','.userOnline',function(){
   var id=this.id;
+  socket.emit('check if already connected',id);
   //id is the id of user selected from online user list for chat request(sender id)
   socket.emit('send request', id);
   console.log('request is sending........');
@@ -52,6 +48,7 @@ $(document).on('click','#reject',function(){
   $('#chatRequest').remove();
   socket.emit('rejected',x);
 });
+
 //Receiver click on accept button. First we are fetching the id of sender and sending it to server by emiting 'accept'
 $(document).on('click','#accept',function(){
   var x=$(this).attr('sId'); //sId and x is the id of sender who send request for chat
@@ -60,8 +57,9 @@ $(document).on('click','#accept',function(){
   tempx=x.replace("/","");
   tempx=tempx.replace("#","");
   //Dynamically created form in which id of input is m+idOfSender who send request for chat and id of button is the id of sender who send request for chat
-  var form=$('<form id="messageForm"> <input type="text" id="m'+tempx+'"/><button type="button" class="sendBtn"  id = "'+ x+'" >Send</button>');
+  var form=$('<form id="messageForm"> <input type="text" id="m'+tempx+'"/><button type="button" class="sendBtn"  id = "'+ x+'" >Send</button></form>	<input id="file" type="file" />');
   //id of list is mess+idOfSender who send request for chat
+
   var li=$('<ul id= "mess'+tempx+'"></ul>');
   form.append(li);
   div.append(form);
@@ -80,7 +78,7 @@ socket.on('request accepted',function(name,rId){ //rId is the id of user who acc
   temp=rId.replace("/","");
   temp=temp.replace("#","");
   var div=$('<div/>');
-  var form=$('<form id="messageForm"> <input type="text" id="m'+temp+'"/><button type="button" class="sendBtn"  id = "'+ rId+'" >Send</button>');
+  var form=$('<form id="messageForm"> <input type="text" id="m'+temp+'"/><button type="button" class="sendBtn"  id = "'+ rId+'" >Send</button></form><input rId="'+rId+'" id="file" type="file" />');
   var li=$('<ul id= "mess'+temp+'"></ul>');
   form.append(li);
   div.append(form);
@@ -109,4 +107,35 @@ socket.on('chat message rec', function(name,msg,id){
   var tempId=id.replace("/","");
   tempId=tempId.replace("#","");
   $('#mess'+tempId).append($('<li>').text(name+": "+msg));
+});
+
+$(document).on('change','#file',function(event){
+   var file = event.target.files[0];
+   var stream = ss.createStream();
+   var rId = $(this).attr("rId");
+   ss(socket).emit('file',stream,{name:file.name, size:file.size});
+   var blobStream = ss.createBlobReadStream(file);
+   var size = 0;
+   blobStream.on('data', function(chunk) {
+     size += chunk.length;
+     if((size/file.size) == 1)
+     socket.emit("file upload complete",rId,file.name,file.size);
+     console.log(Math.floor(size / file.size * 100));
+
+   });
+   blobStream.pipe(stream);
+  // ss.createBlobReadStream(file).pipe(stream);
+});
+
+socket.on('chat file self', function(name,fPath,id){
+  var tempId=id.replace("/","");
+  tempId=tempId.replace("#","");
+  $('#mess'+tempId).append($('<li>').html('<a href="public/images/'+fPath+'" target="_blank">Click here to download file</a> '));
+});
+
+//Sending message to other user
+socket.on('chat file rec', function(name,fPath,id){
+  var tempId=id.replace("/","");
+  tempId=tempId.replace("#","");
+  $('#mess'+tempId).append($('<li>').html('<a href="public/images/'+fPath+'" target="_blank">Click here to download file</a> '));
 });
